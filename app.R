@@ -21,7 +21,11 @@ ui <- fluidPage(
             selectizeInput(inputId = "typ", label = "Typ placówki", choices = NULL, selected = NULL, multiple = TRUE)
         )
     ),
-    
+    fluidRow(
+        column(9, 
+               textOutput(outputId = "liczba_wybranych")
+               )
+    ),
     fluidRow(
         column(9,
                textOutput(outputId = "maile")
@@ -38,7 +42,7 @@ server <- function(input, output, session) {
     szkoly <- reactive({as_tibble(read.csv("wykaz_szkol_2.csv"))})
     wojewodztwa <- reactive({unique(szkoly()[["Wojewodztwo"]])})
     rodzaj <- reactive({unique(szkoly()[["Typ.podmiotu"]])})
-    maile <- reactiveVal({"Nic nie wybrano"})
+    maile <- reactiveVal({NULL})
     observeEvent(szkoly, {
         updateSelectizeInput(session = session, inputId = "wojewodztwo", choices = wojewodztwa())
         updateSelectizeInput(session = session, inputId = "typ", choices = rodzaj())
@@ -53,6 +57,7 @@ server <- function(input, output, session) {
     })
     
     output$maile <- renderText(maile())
+    output$liczba_wybranych <- renderText(paste0("Liczba wybranych placówek: ", length(maile())))
     
 }
 
