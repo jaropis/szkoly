@@ -14,7 +14,7 @@ library(magrittr)
 ui <- fluidPage(
 
     # Application title
-    h1("Szkoly"),
+    h1("Adresy e-mail polskich szkół"),
     fluidRow(
         column(9,
             selectizeInput(inputId = "wojewodztwo", label = "Województwo", choices = NULL, selected = NULL, multiple = TRUE),
