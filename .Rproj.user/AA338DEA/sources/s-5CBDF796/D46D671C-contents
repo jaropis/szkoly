@@ -17,7 +17,7 @@ ui <- fluidPage(
     h1("Szkoly"),
     fluidRow(
         column(9,
-            selectizeInput(inputId = "wojewodztwo", label = "Województwo", choices = NULL, selected = NULL),
+            selectizeInput(inputId = "wojewodztwo", label = "Województwo", choices = NULL, selected = NULL, multiple = TRUE),
             selectizeInput(inputId = "typ", label = "Typ placówki", choices = NULL, selected = NULL, multiple = TRUE)
         )
     ),
@@ -35,10 +35,10 @@ ui <- fluidPage(
 server <- function(input, output, session) {
     library(tibble)
     
-    szkoly <- reactive({as_tibble(read.csv("wykaz_szkol.csv"))})
-    wojewodztwa <- reactive({unique(szkoly()[["Województwo"]])})
-    rodzaj <- reactive({unique(szkoly()[["Nazwa.typu"]])})
-    maile <- reactiveVal({"pusto"})
+    szkoly <- reactive({as_tibble(read.csv("wykaz_szkol_2.csv"))})
+    wojewodztwa <- reactive({unique(szkoly()[["Wojewodztwo"]])})
+    rodzaj <- reactive({unique(szkoly()[["Typ.podmiotu"]])})
+    maile <- reactiveVal({"Nic nie wybrano"})
     observeEvent(szkoly, {
         updateSelectizeInput(session = session, inputId = "wojewodztwo", choices = wojewodztwa())
         updateSelectizeInput(session = session, inputId = "typ", choices = rodzaj())
@@ -47,8 +47,8 @@ server <- function(input, output, session) {
     observe({
         req(input$wojewodztwo)
         req(input$typ)
-        maile_inside <- szkoly()[["e.mail"]]
-        maile_inside[szkoly()[["Województwo"]] %in% input$wojewodztwo & szkoly()[["Nazwa.typu"]] %in% input$typ] %>% 
+        maile_inside <- szkoly()[["Adres.email"]]
+        maile_inside[szkoly()[["Wojewodztwo"]] %in% input$wojewodztwo & szkoly()[["Typ.podmiotu"]] %in% input$typ] %>% 
             maile()
     })
     
